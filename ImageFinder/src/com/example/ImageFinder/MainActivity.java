@@ -20,6 +20,10 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -107,8 +111,15 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     }
 
     public String validateTag(String tag){
-        String result = tag.replace(" ","%20");
-        return result;
+        try {
+            String url = URLEncoder.encode(tag,"UTF8");
+            Log.d("myLogs",url);
+            return url;
+        } catch (Exception e) {
+           Log.d("myLogs","encoding error");
+        }
+        //String result = tag.replace(" ","%20");
+        return tag;
     }
 
 
@@ -158,30 +169,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         ListView lvFPictures = (ListView) findViewById(R.id.lvFPictures);
         FILAdapter = adapter;
         lvFPictures.setAdapter(adapter);
-
-//        lvFPictures.setOnScrollListener(new AbsListView.OnScrollListener() {
-//            public void onScrollStateChanged(AbsListView view, int scrollState) {
-//                // Log.d(LOG_TAG, "scrollState = " + scrollState);
-//            }
-//
-//            public void onScroll(AbsListView view, int firstVisibleItem,
-//                                 int visibleItemCount, int totalItemCount) {
-//                if((firstVisibleItem + visibleItemCount + 10) > totalItemCount ){
-//                    try {
-//                        //imageBase.AddMoreImages();
-//                        //Nextloadtask nlt = new Nextloadtask();
-//                        //nlt.execute(MainAct.imageBase,this);
-//                        Log.d("myLogs", new Integer(imageBase.count()).toString());
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    adapter.notifyDataSetChanged();
-//                }
-//                Log.d("myLogs", "scroll: firstVisibleItem = " + firstVisibleItem
-//                        + ", visibleItemCount" + visibleItemCount
-//                        + ", totalItemCount" + totalItemCount);
-//            }
-//        });
     }
 
     public void showLargePicture(Image img){
@@ -206,8 +193,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
         return new SaveMyInstance(imageBase,FavorImages);
     }
-
-
 }
 
 class Downloadtask extends AsyncTask<Object,Void,ImageBase>{
@@ -223,13 +208,15 @@ class Downloadtask extends AsyncTask<Object,Void,ImageBase>{
             imageBase.AddMoreImages();
         }
         catch (Exception e) {
-            Toast.makeText(mainAct,e.getMessage(),Toast.LENGTH_LONG);
+            e.printStackTrace();
+            //Toast.makeText(mainAct,"Отсутствует подключение к интернету",Toast.LENGTH_LONG);
         }
         return imageBase;
     }
 
     @Override
     protected void onPostExecute(ImageBase result){
+
         ListLoad ll = new ListLoad();
         ll.execute(result,mainAct);
     }
