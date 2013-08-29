@@ -1,6 +1,9 @@
 package com.example.ImageFinder;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -47,8 +50,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     public void onCreate(Bundle savedInstanceState) {
 
 
-
-
         setTheme(THEME); //Used for theme switching in samples
         super.onCreate(savedInstanceState);
 
@@ -83,15 +84,13 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         tabsActionBar.addTab(tab);
 
 
-
-        SaveMyInstance myInstance = (SaveMyInstance)getLastCustomNonConfigurationInstance();
-        if(myInstance != null){
+        SaveMyInstance myInstance = (SaveMyInstance) getLastCustomNonConfigurationInstance();
+        if (myInstance != null) {
             imageBase = myInstance.imageBase;
             FavorImages = myInstance.images;
             ListLoad ll = new ListLoad();
-            ll.execute(imageBase,this);
-        }
-        else {
+            ll.execute(imageBase, this);
+        } else {
             imageBase = new ImageBase("");
             FavorImages = new ImageDB().LoadImageBase(this);
         }
@@ -99,24 +98,31 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
-        new ImageDB().SaveImageBase(FavorImages,this);
+        new ImageDB().SaveImageBase(FavorImages, this);
     }
 
-    public void Search(String Tag){
-        imageBase = new ImageBase(validateTag(Tag));
-        dlt = new Downloadtask();
-        dlt.execute(imageBase,this);
+    public void Search(String Tag) {
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        if (ni == null)
+            Toast.makeText(this, "Отсутсвует подключение к интернету", Toast.LENGTH_LONG);
+        else {
+            imageBase = new ImageBase(validateTag(Tag));
+            dlt = new Downloadtask();
+            dlt.execute(imageBase, this);
+        }
     }
 
-    public String validateTag(String tag){
+    public String validateTag(String tag) {
         try {
-            String url = URLEncoder.encode(tag,"UTF8");
-            Log.d("myLogs",url);
+            String url = URLEncoder.encode(tag, "UTF8");
+            Log.d("myLogs", url);
             return url;
         } catch (Exception e) {
-           Log.d("myLogs","encoding error");
+            Log.d("myLogs", "encoding error");
         }
         //String result = tag.replace(" ","%20");
         return tag;
@@ -135,7 +141,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     public void onTabUnselected(Tab tab, FragmentTransaction transaction) {
     }
 
-    public void setPictureAdapter(final ImageListAdapter adapter){
+    public void setPictureAdapter(final ImageListAdapter adapter) {
         ListView lvPictures = (ListView) findViewById(R.id.lvPictures);
         lvPictures.setAdapter(adapter);
 
@@ -146,12 +152,12 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
-                if(((firstVisibleItem + visibleItemCount + 10) > totalItemCount )&&(imageBase != null))
-                    if(imageBase.lastPage != 0){
+                if (((firstVisibleItem + visibleItemCount + 10) > totalItemCount) && (imageBase != null))
+                    if (imageBase.lastPage != 0) {
                         try {
                             //MainAct.imageBase.AddMoreImages();
                             Nextloadtask nlt = new Nextloadtask();
-                            nlt.execute(imageBase,MainActivity.this);
+                            nlt.execute(imageBase, MainActivity.this);
                             Log.d("myLogs", new Integer(FavorImages.size()).toString());
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -164,84 +170,83 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         });
     }
 
-    public void setFavoriteAdapter(final FavorImageListAdaptor adapter){
+    public void setFavoriteAdapter(final FavorImageListAdaptor adapter) {
 
         ListView lvFPictures = (ListView) findViewById(R.id.lvFPictures);
         FILAdapter = adapter;
         lvFPictures.setAdapter(adapter);
     }
 
-    public void showLargePicture(Image img){
+    public void showLargePicture(Image img) {
 
         Intent intent = new Intent(this, LargeImageActivity.class);
         intent.putExtra("URL", img.getUrl().toString());
         startActivity(intent);
     }
 
-    public void addToFavorBase(Image image){
+    public void addToFavorBase(Image image) {
         FavorImages.add(image);
         Log.d("myLogs", new Integer(FavorImages.size()).toString());
         FILAdapter.notifyDataSetChanged();
     }
 
-    public void DelFromFavor(Integer index){
+    public void DelFromFavor(Integer index) {
         FavorImages.remove(index.intValue());
         FILAdapter.notifyDataSetChanged();
     }
 
-    public Object onRetainCustomNonConfigurationInstance(){
+    public Object onRetainCustomNonConfigurationInstance() {
 
-        return new SaveMyInstance(imageBase,FavorImages);
+        return new SaveMyInstance(imageBase, FavorImages);
     }
 }
 
-class Downloadtask extends AsyncTask<Object,Void,ImageBase>{
+class Downloadtask extends AsyncTask<Object, Void, ImageBase> {
 
     ImageBase imageBase;
     MainActivity mainAct;
 
     @Override
     protected ImageBase doInBackground(Object... params) {
-        imageBase = (ImageBase)params[0];
-        mainAct = (MainActivity)params[1];
+        imageBase = (ImageBase) params[0];
+        mainAct = (MainActivity) params[1];
         try {
             imageBase.AddMoreImages();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             //Toast.makeText(mainAct,"Отсутствует подключение к интернету",Toast.LENGTH_LONG);
         }
+
         return imageBase;
     }
 
     @Override
-    protected void onPostExecute(ImageBase result){
+    protected void onPostExecute(ImageBase result) {
 
         ListLoad ll = new ListLoad();
-        ll.execute(result,mainAct);
+        ll.execute(result, mainAct);
     }
 }
 
-class Nextloadtask extends AsyncTask<Object,Void,ImageBase>{
+class Nextloadtask extends AsyncTask<Object, Void, ImageBase> {
 
     ImageBase imageBase;
     MainActivity mainAct;
 
     @Override
     protected ImageBase doInBackground(Object... params) {
-        imageBase = (ImageBase)params[0];
-        mainAct = (MainActivity)params[1];
+        imageBase = (ImageBase) params[0];
+        mainAct = (MainActivity) params[1];
         try {
             imageBase.AddMoreImages();
-        }
-        catch (Exception e) {
-            Toast.makeText(mainAct,e.getMessage(),Toast.LENGTH_LONG);
+        } catch (Exception e) {
+            Toast.makeText(mainAct, e.getMessage(), Toast.LENGTH_LONG);
         }
         return imageBase;
     }
 
     @Override
-    protected void onPostExecute(ImageBase result){
+    protected void onPostExecute(ImageBase result) {
 
     }
 }

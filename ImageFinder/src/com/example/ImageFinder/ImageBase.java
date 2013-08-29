@@ -98,11 +98,11 @@ public class ImageBase{
         return ValidateSearchTag;
     }
 
-    synchronized public void AddMoreImages() throws Exception {
+    synchronized public void AddMoreImages() {
 
         final int RSZ = 8;      //count images in one query, must be 4 to 8
         HttpURLConnection connection;
-
+         try{
             URL url = new URL("http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + SearchTag + "&rsz=" + RSZ + "&start=" + this.lastPage);
             connection = (HttpURLConnection) url.openConnection();
 
@@ -140,6 +140,10 @@ public class ImageBase{
                 this.IsEnd = true;      //if imagearray is not complete, so there are no more pictures
 
             this.lastPage += RSZ;       //increment search start position to current search page
+         }
+         catch (Exception e){
+             e.printStackTrace();
+         }
     }
 
     public void setEnd() {
