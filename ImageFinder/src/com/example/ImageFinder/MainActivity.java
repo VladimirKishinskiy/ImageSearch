@@ -101,9 +101,14 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     }
 
     public void Search(String Tag){
-        imageBase = new ImageBase(Tag);
+        imageBase = new ImageBase(validateTag(Tag));
         dlt = new Downloadtask();
         dlt.execute(imageBase,this);
+    }
+
+    public String validateTag(String tag){
+        String result = tag.replace(" ","%20");
+        return result;
     }
 
 
