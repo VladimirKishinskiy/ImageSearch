@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="horizontal">
+	<ImageView
+			android:id="@+id/ivImg"
+			android:layout_width="96dp"
+			android:layout_height="96dp"
+			android:src="@drawable/defaultimage"
+			android:padding="0dp"
+			android:scaleType="centerInside">
+	</ImageView>
+	<RelativeLayout
+			android:id="@+id/linearLayout1"
+			android:layout_width="match_parent"
+			android:layout_height="96dp"
+			android:padding="5dp">
+		<TextView
+				android:id="@+id/tvPicName"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="left"
+				android:text="Picture name"
+				android:textSize="24dp"
+				android:singleLine="true"
+				android:scrollHorizontally="true">
+		</TextView>
+
+		<TextView
+				android:id="@+id/tvSiteName"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="left"
+				android:text="Site-source of picture"
+				android:layout_below="@+id/tvPicName"
+				android:textSize="18dp"
+				android:singleLine="true"
+				android:scrollHorizontally="true">
+		</TextView>
+		<TextView
+				android:id="@+id/tvSize"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="left"
+				android:text="picture resolution"
+				android:singleLine="true"
+				android:scrollHorizontally="true"
+				android:layout_alignParentLeft="true" android:layout_alignBaseline="@+id/ToFavorButton">
+		</TextView>
+		<Button
+				android:id="@+id/ToFavorButton"
+				android:layout_width="wrap_content"
+				android:layout_height="30dp"
+				android:text="@string/to_favor"
+				android:textSize="10dp"
+				android:layout_alignParentRight="true"
+				android:layout_alignParentBottom="true">
+		</Button>
+
+	</RelativeLayout>
+</LinearLayout>

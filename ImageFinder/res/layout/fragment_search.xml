@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+	<RelativeLayout
+		android:orientation="horizontal"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:padding="10dp">
+		<ImageButton
+				android:id="@+id/searchbutton"
+				android:layout_width="48dp"
+				android:layout_height="48dp"
+				android:scaleType="centerInside"
+				android:src="@drawable/search"
+				android:layout_alignParentRight="true"
+				android:padding="0dp">
+		</ImageButton>
+		<EditText
+				android:id="@+id/searchtext"
+			    android:layout_height="wrap_content"
+			    android:layout_width="124dp"
+			    android:layout_alignParentLeft="true"
+				android:textSize="26dp" android:layout_toLeftOf="@+id/searchbutton"
+				android:scrollHorizontally="true"
+				android:singleLine="true">
+		</EditText>
+	</RelativeLayout>
+	<ListView
+			android:id="@+id/lvPictures"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+	</ListView>
+</LinearLayout>

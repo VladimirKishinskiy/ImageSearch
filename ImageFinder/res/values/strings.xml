@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">ImageFinder</string>
+	<string name="to_favor">В избранное</string>
+	<string name="del_from_favor">Удалить</string>
+</resources>
